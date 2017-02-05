@@ -1,0 +1,28 @@
+
+.lldt-container button{ font-size: 14px; padding: 5px 1em; }
+
+.lldt-lookup input{ width: 45%; font-size: 14px; padding: 3px; cursor: pointer; }
+
+.lldt-legislators{ padding: 0; width: 80%; }
+.lldt-legislators li{ float: left; width: 33%; list-style: none; }
+.lldt-legislators label{ display: block;}
+.lldt-legislators img{ max-width: 80%; display: block; cursor: pointer; }
+.lldt-legislators input{ display: none; }
+.lldt-legislators p{ font-size: 0.8em; }
+.lldt-legislators p.contact{ margin: 0; }
+.lldt-legislators p.contact.name{ font-weight: bold; margin: 0.5em 0 0.25em; }
+
+.lldt-script-text{ white-space: pre-line; margin: 2em 1em; color: #444; }
+
+.clearfix:after {
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: " ";
+     clear: both;
+     height: 0;
+     }
+.clearfix { display: inline-block; }
+/* start commented backslash hack \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
