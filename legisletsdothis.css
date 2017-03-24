@@ -1,18 +1,24 @@
-
-.lldt-container button{ font-size: 14px; padding: 5px 1em; }
-
-.lldt-lookup input{ width: 45%; font-size: 14px; padding: 3px; cursor: pointer; }
-
-.lldt-legislators{ padding: 0; width: 80%; }
-.lldt-legislators li{ float: left; width: 33%; list-style: none; }
+.lldt-lookup input.input-sm{ font-size: 12px; cursor: pointer; padding: 5px 10px; }
+.lldt-container{ padding-top: 2em; }
+.lldt-legislators{ padding: 0; }
 .lldt-legislators label{ display: block;}
-.lldt-legislators img{ max-width: 80%; display: block; cursor: pointer; }
+.lldt-legislators img{ max-width: 100%; display: block; cursor: pointer; }
 .lldt-legislators input{ display: none; }
-.lldt-legislators p{ font-size: 0.8em; }
-.lldt-legislators p.contact{ margin: 0; }
-.lldt-legislators p.contact.name{ font-weight: bold; margin: 0.5em 0 0.25em; }
+.lldt-legislators p.contact{ margin: 0; text-overflow: wrap; line-height: 20px }
+.lldt-legislators p.contact.name{ font-weight: bold; font-size: 14px; margin: 0.5em 0 0.25em; }
+.lldt-actions{ margin-top: 2em; }
 
-.lldt-script-text{ white-space: pre-line; margin: 2em 1em; color: #444; }
+.lldt-script-text{ /* */ }
+
+.row.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+}
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+  padding-right: 0;
+  padding-left: 0;
+}
 
 .clearfix:after {
      visibility: hidden;

@@ -33,6 +33,12 @@ var legisletsdothis = (function(){
         handle_lookup_form_submit: function(event){
             event.preventDefault();
 
+            if(self.address_input.value == ''){
+               alert('Please enter your address');
+               self.address_input.focus();
+               return;
+            }
+
             // geocode their address
             self.geocoder.geocode({ 'address': self.address_input.value }, function(results, status) {
               if (status == google.maps.GeocoderStatus.OK) {
@@ -62,6 +68,8 @@ var legisletsdothis = (function(){
 
             self.document.getElementById('lldt-legislators').innerHTML = '';
 
+            self.document.getElementById('lldt-legislative-district').innerHTML = self.ordinalize(self.legislators[0].district);
+
             for(var l = 0; l < self.legislators.length; l++){
                 var legislator = self.legislators[l];
 
@@ -69,15 +77,17 @@ var legisletsdothis = (function(){
                 legislator.email = (legislator.email ? legislator.email : legislator.offices[0].email);
 
                 legislator.title = legislator.chamber == 'lower' ? 'Representative' : 'Senator';
+        legislator.title_abbr = legislator.chamber == 'lower' ? 'Rep.' : 'Sen.';
 
-                var node = self.document.createElement('li');
-                node.innerHTML = `<label for="legislator-${legislator.id}">
-                                    <img src="${legislator.photo_url}" />
+                var node = self.document.createElement('div');
+                node.setAttribute('class', 'row no-gutters');
+                node.innerHTML = `<div class="col-xs-4 col-sm-3"><label for="legislator-${legislator.id}"><img src="${legislator.photo_url}" /></label></div>
+                                    <div class="col-xs-8 col-sm-9" style="padding-left: 10px;">
                                     <input id="legislator-${legislator.id}" type="radio" name="legislator" value="${legislator.id}" data-phone="${legislator.phone}" data-email="${legislator.email}" />
-                                    <p class="contact name">${legislator.title} ${legislator.full_name}</p>
+                                    <p class="contact name">${legislator.title_abbr} ${legislator.full_name}</p>
                                     <p class="contact phone"><a href="tel:${legislator.phone}">${legislator.phone}</a></p>
-                                    <p class="contact email"><a href="mailto:${legislator.email}">${legislator.email}</a></p>
-                                </label>`;
+                                    <p class="contact email"><a href="mailto:${legislator.email}">${legislator.email.replace('@', '@&#8203;')}</a></p>
+                                    </div>`;
                 self.legislators_list.appendChild(node);
             }
 
@@ -90,11 +100,15 @@ var legisletsdothis = (function(){
                 return;
             }
 
-            self.document.getElementById('lldt-script').removeAttribute('style');
+            self.document.getElementById('lldt-script-text-original').setAttribute('style', 'display: none;');
+            self.document.getElementById('lldt-actions').removeAttribute('style');
             self.legislator = self.legislators.filter(function(l){ return l.id == event.target.value})[0];
             self.document.getElementById('lldt-script-text').innerHTML = self.format_script(self.document.getElementById('lldt-script-text-original').innerHTML, self.legislator);
+            self.document.getElementById('lldt-script-text').removeAttribute('style');
             self.document.getElementById('email-button').innerHTML = 'Write an Email to ' + self.legislator.full_name;
             self.document.getElementById('phone-button').innerHTML = 'Call ' + self.legislator.full_name;
+
+            $.scrollTo('#lldt-script-text', 600);
 
         },
 
@@ -104,16 +118,16 @@ var legisletsdothis = (function(){
                 'legislative district': self.ordinalize(legislator.district) ,
                 'legislator first name': legislator.first_name,
                 'legislator full name': legislator.full_name,
+        'legislator title': legislator.title,
+                'legislator title abbr': legislator.title_abbr,
             };
 
             var matches = text.match(/\[\s?([\w\s]+)\s?\]/g);
 
             for(var m = 0; m < matches.length; m++){
-                console.log(matches[m]);
                  var key = matches[m].replace('[', '').replace(']', '').trim().toLowerCase();
-                 console.log(key);
                  if(template_variable_map.hasOwnProperty(key)){
-                    text = text.replace(RegExp('\\\[\\\s?' + key + '\\\s?\\\]', 'gi'), template_variable_map[key])
+                    text = text.replace(RegExp('\\\[\\\s?' + key + '\\\s?\\\]', 'gi'), template_variable_map[key]);
                  }
             }
 
