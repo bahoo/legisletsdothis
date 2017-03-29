@@ -3,7 +3,7 @@
         Plugin Name: Legisletsdothis
         Plugin URI: http://jonculver.com/
         Description: Call your legislators.
-        Version: 1.0.2
+        Version: 1.0.5
         Author: Jon Culver
     */
 
@@ -13,8 +13,8 @@
 
         if(has_shortcode($post->post_content, 'legisletsdothis')){
             wp_enqueue_script("legisletsdothis-googlemaps", "https://maps.googleapis.com/maps/api/js?key=AIzaSyCyXnRHRgaJSOpF-QuEpecokWC-rR4ynnQ", array(), false, true);
-            wp_enqueue_script("legisletsdothis-core-js", plugins_url('legisletsdothis/legisletsdothis.js'), array(), '1.0.2', true);
-            wp_enqueue_style("legisletsdothis-core-css", plugins_url('legisletsdothis/legisletsdothis.css'), array(), '1.0.2');
+            wp_enqueue_script("legisletsdothis-core-js", plugins_url('legisletsdothis/legisletsdothis.js'), array(), '1.0.5', true);
+            wp_enqueue_style("legisletsdothis-core-css", plugins_url('legisletsdothis/legisletsdothis.css'), array(), '1.0.5');
         }
     }
     add_action('wp_enqueue_scripts', 'legisletsdothis_load_resources');
@@ -37,6 +37,7 @@
                         [ LEGISLATOR TITLE_ABBR ]
                         [ LEGISLATOR FIRST NAME ]
                         [ LEGISLATOR FULL NAME ]
+                        [ LEGISLATOR NAME ] (full title + full name)
                  -->
 
 
@@ -50,6 +51,8 @@
                 <div class="lldt-actions" id="lldt-actions" style="display: none;">
                     <button id="phone-button" class="btn btn-primary">Call</button>
                     <button id="email-button" class="btn btn-primary">Write an Email</button>
+
+                    <p class="text-muted small" style="margin-top: 2em;">Heads up: If the email button doesn't work for you, you can also copy and paste your legislator's email address into a new email, and then copy and paste our script in, and send it to them that way. Easy!</p>
                 </div>
 
             </div>
@@ -61,9 +64,9 @@
             <div class="lldt-lookup">
                 <form id="lldt-form">
                     <h5>Personalize your script!</h5>
-                    <p>Please enter your address to personalize your email or call script.</p>
+                    <p>Please enter your home address to personalize your email or call script.</p>
                     <div class="form-group">
-                        <input type="text" class="form-control input-sm" id="lldt-address-input" />
+                        <input type="text" class="form-control input-sm" id="lldt-address-input" placeholder="416 Sid Snyder Ave SW, Olympia, WA 98504" />
                     </div>
                     <button type="submit" class="btn btn-sm btn-success">Find My Legislators</button>
                 </form>
@@ -72,7 +75,7 @@
             <div class="lldt-legislator-widget" id="lldt-legislator-widget" style="display: none;">
                 
                 <h5>You are in the <span id="lldt-legislative-district"></span> Legislative District.</h5>
-                <p>Click on a legislator's photo for your personalized script.</p>
+                <p>Click on a legislator's name or photo, and we'll personalize your script.</p>
                 <div class="lldt-legislators clearfix" id="lldt-legislators">
                 </div>
 

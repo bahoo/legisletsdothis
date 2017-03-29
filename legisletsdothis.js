@@ -26,6 +26,7 @@ var legisletsdothis = (function(){
             self.lookup_form = self.document.getElementById('lldt-form');
             self.lookup_form.addEventListener('submit', self.handle_lookup_form_submit);
             self.legislators_list.addEventListener('click', self.handle_legislator_click);
+            self.legislators_list.addEventListener('mousedown', self.handle_legislator_mouse_down);
             self.document.getElementById('lldt-script').addEventListener('click', self.handle_action_click);
 
         },
@@ -81,21 +82,23 @@ var legisletsdothis = (function(){
 
                 var node = self.document.createElement('div');
                 node.setAttribute('class', 'row no-gutters');
-                node.innerHTML = `<div class="col-xs-4 col-sm-3"><label for="legislator-${legislator.id}"><img src="${legislator.photo_url}" /></label></div>
-                                    <div class="col-xs-8 col-sm-9" style="padding-left: 10px;">
-                                    <input id="legislator-${legislator.id}" type="radio" name="legislator" value="${legislator.id}" data-phone="${legislator.phone}" data-email="${legislator.email}" />
-                                    <p class="contact name">${legislator.title_abbr} ${legislator.full_name}</p>
-                                    <p class="contact phone"><a href="tel:${legislator.phone}">${legislator.phone}</a></p>
-                                    <p class="contact email"><a href="mailto:${legislator.email}">${legislator.email.replace('@', '@&#8203;')}</a></p>
-                                    </div>`;
+                node.innerHTML = "<div class=\"col-xs-4 col-sm-3\"><label for=\"legislator-" + legislator.id + "\"><img src=\"" + legislator.photo_url + "\" /></label></div>" +
+                                    "<div class=\"col-xs-8 col-sm-9\" style=\"padding-left: 10px;\">" +
+                                    "<input id=\"legislator-" + legislator.id + "\" type=\"radio\" name=\"legislator\" value=\"" + legislator.id + "\" data-phone=\"" + legislator.phone + "\" data-email=\"" + legislator.email + "\" />" +
+                                    "<p class=\"contact name\"><label for=\"legislator-" + legislator.id + "\">" + legislator.title_abbr + " " + legislator.full_name + "</label></p>" +
+                                    "<p class=\"contact phone\"><a href=\"tel:" + legislator.phone + "\">" + legislator.phone + "</a></p>" +
+                                    "<p class=\"contact email\"><a href=\"mailto:" + legislator.email + "\">" + legislator.email + "</a></p>" +
+                                    "</div>";
                 self.legislators_list.appendChild(node);
             }
 
             self.document.getElementById('lldt-legislator-widget').removeAttribute('style');
+            self.track_ga_event('Legislators', 'Looked up', self.ordinalize(self.legislators[0].district));
 
         },
 
         handle_legislator_click: function(event){
+
             if(event && event.target.tagName != 'INPUT'){
                 return;
             }
@@ -110,6 +113,16 @@ var legisletsdothis = (function(){
 
             $.scrollTo('#lldt-script-text', 600);
 
+            self.track_ga_event('Legislators', 'Selected', self.legislator.full_name);
+
+        },
+
+        handle_legislator_mouse_down: function(event){
+            if(event.target.tagName == "A"){
+                var legislator_id = event.target.parentNode.parentNode.querySelector('input[name="legislator"]').id.replace('legislator-', '');
+                self.legislator = self.legislators.filter(function(l){ return l.id == legislator_id})[0];
+                self.track_ga_event('Legislators', event.target.parentNode.className, self.legislator.full_name);
+            }
         },
 
         format_script: function(text, legislator){
@@ -118,8 +131,9 @@ var legisletsdothis = (function(){
                 'legislative district': self.ordinalize(legislator.district) ,
                 'legislator first name': legislator.first_name,
                 'legislator full name': legislator.full_name,
-        'legislator title': legislator.title,
+                'legislator title': legislator.title,
                 'legislator title abbr': legislator.title_abbr,
+                'legislator name': legislator.title + ' ' + legislator.full_name,
             };
 
             var matches = text.match(/\[\s?([\w\s]+)\s?\]/g);
@@ -156,6 +170,10 @@ var legisletsdothis = (function(){
             } else if(event.target.id == 'email-button'){
                 window.location.href = "mailto:" + self.legislator.email + "?subject=Amply Funding Basic Education&body=" + self.document.getElementById('lldt-script-text').innerHTML.trim().split('\n').map(function(m){ return m.trim(); }).join('\n').replace(/ +/gi, ' ').replace(/\n/gi, '%0D%0A');
             }
+        },
+
+        track_ga_event: function(category, action, label, value){
+            return ga && ga('send', 'event', category, action, label);
         }
 
     };
